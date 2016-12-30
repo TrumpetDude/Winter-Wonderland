@@ -3,6 +3,11 @@
 import pygame, sys
 from pygame.locals import *
 from random import randint
+import os
+if not(os.path.isfile(os.path.dirname(os.path.realpath(__file__))+'/blizzardHighScore.txt')):
+    hsfile = open('blizzardHighScore.txt','w')
+    hsfile.write('0')
+    hsfile.close()
 pygame.init()
 window = pygame.display.set_mode((1300,700))
 pygame.display.set_caption("Blizzard","Blizzard")
@@ -33,8 +38,7 @@ snowflakes = []
 baseSpeed = 7                                   #Bigger = faster match
 snowSpeed = 3                                   #Bigger = faster snow
 snowFrequency = 25                              #Smaller = more snow
-increaseRate = 250                              #Smaller = faster increase
-increaseLimit = 6                               #Smaller = increases more
+increaseRate = 200                              #Smaller = faster increase
 tiltAmount = 16                                 #Bigger = more tilt
 tiltSpeed = 2                                   #Bigger = faster tilting
 
@@ -48,6 +52,22 @@ def drawText(window, text, size, color, centerX, centerY):
     window.blit(renderedText, textpos)
 
 def gameOver(window, snowflakes):
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
+    hsfile = open('blizzardHighScore.txt','r')
+    if score > int(hsfile.read()):
+        beatHS = True
+        drawText(window, "NEW HIGHSCORE!", 80, (0,0,0), 650, 450)
+        hsfile.close()
+        hsfile = open('blizzardHighScore.txt','w')
+        hsfile.write(str(score))
+        hsfile.close()
+    else:
+        hsfile.close()
+        beatHS = False
+        hsfile = open('blizzardHighScore.txt')
+        highScore = hsfile.read()
+        hsfile.close()
+        drawText(window, "HIGHSCORE: "+highScore, 80, (0,0,0), 650, 450)
     for flake in snowflakes:
         window.blit(flake[0], (flake[1],flake[2]))
     drawText(window, score, 96, (0,0,0), 650, 50)
@@ -72,7 +92,11 @@ def gameOver(window, snowflakes):
         window.blit(burntOut4, (matchX,592))
         drawText(window, score, 96, (0,0,0), 650, 50)
         drawText(window, "GAME OVER!", 120, (0,0,0), 650, 350)
-        if randint(1,snowFrequency) == 1:
+        if beatHS:
+            drawText(window, "NEW HIGHSCORE!", 80, (0,0,0), 650, 450)
+        else:
+            drawText(window, "HIGHSCORE: "+highScore, 80, (0,0,0), 650, 450)
+        if randint(1,round(snowFrequency)) == 1:
             snowflakes.append([snowflakeImages[randint(0,5)], randint(0,1234), -64])
         for flake in snowflakes:
             if flake[0] == snowflake1:
@@ -129,9 +153,10 @@ while True:
     ticks += 1
     window.fill((200,200,200))
 
-    if ticks%increaseRate == 0 and snowFrequency > increaseLimit:
-        snowFrequency -= 1
-        snowSpeed += 0.15
+    if ticks%increaseRate == 0:
+        snowFrequency *= 0.925
+        snowSpeed += 0.125
+        speed += 0.15
 
     if randint(1,speedFrequency) == 1 and not(speedOnScreen):
         speedOnScreen = True
@@ -169,7 +194,7 @@ while True:
         pygame.draw.line(window,(0,0,0),(1270,75),(1270, 75+shieldDuration-(ticks-shieldStart)),25)
     
     drawText(window, score, 96, (0,0,0), 650, 50)
-    if randint(1,snowFrequency) == 1:
+    if randint(1,round(snowFrequency)) == 1:
         #                  IMAGE                          X-COORDINATE     Y-COORDINATE
         snowflakes.append([snowflakeImages[randint(0,5)], randint(0,1234), -64])
     for flake in snowflakes:
