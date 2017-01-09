@@ -22,7 +22,7 @@ r = 0
 g = 0
 b = 0
 
-brightness = 127
+brightness = 191
 
 def checkForQuit():
     for event in pygame.event.get():

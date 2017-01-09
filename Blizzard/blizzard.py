@@ -68,23 +68,29 @@ def gameOver(window, snowflakes):
         highScore = hsfile.read()
         hsfile.close()
         drawText(window, "HIGHSCORE: "+highScore, 80, (0,0,0), 650, 450)
-    for flake in snowflakes:
-        window.blit(flake[0], (flake[1],flake[2]))
     drawText(window, score, 96, (0,0,0), 650, 50)
     drawText(window, "GAME OVER!", 120, (0,0,0), 650, 350)
+    for flake in snowflakes:
+        window.blit(flake[0], (flake[1],flake[2]))
     #Burning out animation
     window.blit(burntOut1, (matchX,592))
     pygame.display.update()
     pygame.time.delay(200)
     pygame.draw.line(window, (200,200,200), (matchX+7.5, 592), (matchX+7.5, 700), 15)
+    for flake in snowflakes:
+        window.blit(flake[0], (flake[1],flake[2]))
     window.blit(burntOut2, (matchX,592))
     pygame.display.update()
     pygame.time.delay(200)
     pygame.draw.line(window, (200,200,200), (matchX+7.5, 592), (matchX+7.5, 700), 15)
+    for flake in snowflakes:
+        window.blit(flake[0], (flake[1],flake[2]))
     window.blit(burntOut3, (matchX,592))
     pygame.display.update()
     pygame.time.delay(200)
     pygame.draw.line(window, (200,200,200), (matchX+7.5, 592), (matchX+7.5, 700), 15)
+    for flake in snowflakes:
+        window.blit(flake[0], (flake[1],flake[2]))
     window.blit(burntOut4, (matchX,592))
     pygame.display.update()
     while True:
@@ -100,13 +106,13 @@ def gameOver(window, snowflakes):
             snowflakes.append([snowflakeImages[randint(0,5)], randint(0,1234), -64])
         for flake in snowflakes:
             if flake[0] == snowflake1:
-                flake[2] += snowSpeed*0.8
+                flake[2] += snowSpeed*0.8*2
                 flake[1] += randint(-2,1)
             elif flake[0] == snowflake2:
-                flake[2] += snowSpeed*0.8
+                flake[2] += snowSpeed*0.8*2
                 flake[1] += randint(-1,2)
             elif flake[0] == snowflake3 or flake[0] == snowflake4:
-                flake[2] += snowSpeed*1.25
+                flake[2] += snowSpeed*1.25*2
                 flake[1] += randint(-1,1)
             else:
                 flake[2] += snowSpeed
@@ -215,7 +221,10 @@ while True:
         if flake[2] > 700:
             snowflakes.remove(flake)
             score += 1
-        if 631 > flake[2] > 528 and matchX+15 > flake[1] > matchX-64:
+        addDegrees = 0
+        if degrees < 0:
+            addDegrees = degrees
+        if 631 > flake[2] > 528 and matchX+15+addDegrees > flake[1] > matchX-64-addDegrees:
             if invincible:
                 snowflakes.remove(flake)
                 score += 2
